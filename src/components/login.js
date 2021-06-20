@@ -1,31 +1,29 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
+import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-import { Link } from "react-router-dom";
-
-export default function Signup() {
+export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const confirmpassawordRef = useRef();
-  const { signup } = useAuth();
+  const history = useHistory();
+  const { login } = useAuth();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   async function handlesubmit(e) {
     e.preventDefault();
-    if (passwordRef.current.value !== confirmpassawordRef.current.value) {
-      return setError("Passwords do not match");
-    }
+
     try {
       setLoading(true);
       setError("");
-      await signup(emailRef.current.value, passwordRef.current.value);
+      await login(emailRef.current.value, passwordRef.current.value);
       setLoading(false);
-      alert("Account createed Successfully");
+      alert("Logged in successfully");
       emailRef.current.value = "";
       passwordRef.current.value = "";
-      confirmpassawordRef.current.value = "";
+      history.push("/");
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -35,7 +33,7 @@ export default function Signup() {
   return (
     <Card className=" mt-4">
       <Card.Body>
-        <h2 className="text-center mb-4">Sign Up</h2>
+        <h2 className="text-center mb-4">Login</h2>
         {error && <Alert variant="danger">{error}</Alert>}
         <Form>
           <Form.Group id="email">
@@ -46,13 +44,6 @@ export default function Signup() {
             <Form.Label>Password</Form.Label>
             <Form.Control type="password" ref={passwordRef}></Form.Control>
           </Form.Group>
-          <Form.Group id="confirmpassaword">
-            <Form.Label>Confirm Passaword</Form.Label>
-            <Form.Control
-              type="password"
-              ref={confirmpassawordRef}
-            ></Form.Control>
-          </Form.Group>
         </Form>
         <Button
           className="w-100 mt-4"
@@ -60,11 +51,11 @@ export default function Signup() {
           disabled={isLoading}
           onClick={(e) => handlesubmit(e)}
         >
-          {isLoading ? "Loading…" : "Sign Up"}
+          {isLoading ? "Loading…" : "Login"}
         </Button>
       </Card.Body>
       <div className="w-100 text-center mt-2">
-        Already have an account ? <Link to="/login">Login</Link>
+        Don't have an account ? <Link to="/signup">Sign up</Link>
       </div>
     </Card>
   );
